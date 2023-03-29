@@ -1,3 +1,4 @@
+import { cloneDeep } from 'lodash';
 import { transformSync } from '@babel/core';
 import { parse }  from '@babel/parser';
 import traverse from '@babel/traverse';
@@ -48,7 +49,8 @@ const traverseOptionsMap: Record<string, TraverseOptions<Node>> = {
 // 使用babel的各个子包实现
 Object.entries(traverseOptionsMap).forEach(([key, option]) => {
   const ast = parse(sourceCode, { sourceType: 'unambiguous', plugins: ['jsx']})
-  traverse(ast, option)
+  // traverse会更改传入的option对象的引用
+  traverse(ast, cloneDeep(option))
   const { code } = generate(ast, { sourceMaps: false})
   console.log(`${code} ${key}`)
 })
