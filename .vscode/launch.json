@@ -11,7 +11,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/src/logAddLine/index.ts",
+            "program": "${workspaceFolder}/src/addLog/index.ts",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ],
