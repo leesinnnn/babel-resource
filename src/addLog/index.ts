@@ -60,8 +60,16 @@ const addLogPlugin: PluginItem = ({ types, template }) => ({
   visitor: traverseOptionsMap.addNewLine
 })
 
+// 使用预设
+const addLogPreset: PluginItem = () => ({
+  plugins: [addLogPlugin]
+})
+
+export default addLogPreset
+
 const { code } = transformSync(sourceCode, {
-  plugins: [addLogPlugin],
+  presets: ['./index.ts'],
+  plugins: [],
   parserOpts: {
     sourceType: 'unambiguous',
     plugins: ['jsx']
