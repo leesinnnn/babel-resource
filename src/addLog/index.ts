@@ -3,7 +3,7 @@ import { transformSync } from '@babel/core';
 import { parse }  from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
-import { stringLiteral, arrayExpression, expressionStatement } from '@babel/types'
+import { stringLiteral, arrayExpression, expressionStatement, assertAnyTypeAnnotation } from '@babel/types'
 import template from '@babel/template'
 import sourceCode from './sourceCode';
 import type { TraverseOptions, Node } from '@babel/traverse'
@@ -47,29 +47,33 @@ const traverseOptionsMap: Record<string, TraverseOptions<Node>> = {
 }
 
 // 使用babel的各个子包实现
-Object.entries(traverseOptionsMap).forEach(([key, option]) => {
-  const ast = parse(sourceCode, { sourceType: 'unambiguous', plugins: ['jsx']})
-  // traverse会更改传入的option对象的引用
-  traverse(ast, cloneDeep(option))
-  const { code } = generate(ast, { sourceMaps: false})
-  console.log(`${code} ${key}`)
-})
+// Object.entries(traverseOptionsMap).forEach(([key, option]) => {
+//   const ast = parse(sourceCode, { sourceType: 'unambiguous', plugins: ['jsx']})
+//   // traverse会更改传入的option对象的引用
+//   traverse(ast, cloneDeep(option))
+//   const { code } = generate(ast, { sourceMaps: false})
+//   console.log(`${code} ${key}`)
+// })
 
 // 使用@babel/core和插件形式实现
-const addLogPlugin: PluginItem = ({ types, template }) => ({
+const addNewLinePlugin: PluginItem = ({ types, template }) => ({
   visitor: traverseOptionsMap.addNewLine
+})
+
+const addLineColumnPlugin: PluginItem = (api, option) => ({
+  visitor: traverseOptionsMap.addLineColumn
 })
 
 // 使用预设
 const addLogPreset: PluginItem = () => ({
-  plugins: [addLogPlugin]
+  plugins: [addLineColumnPlugin]
 })
 
 export default addLogPreset
 
 const { code } = transformSync(sourceCode, {
   presets: ['./index.ts'],
-  plugins: [],
+  plugins: [addNewLinePlugin],
   parserOpts: {
     sourceType: 'unambiguous',
     plugins: ['jsx']
