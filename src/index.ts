@@ -1,8 +1,3 @@
-import { addLog1, addLog2 } from './addLog'
-import sourceCode from './addLog/sourceCode'
+import { instrumentation } from './functionInstrumentation'
 
-const result1 = addLog1(sourceCode);
-const result2 = addLog2(sourceCode)
-
-console.log(result1)
-console.log(result2)
+console.log(instrumentation()?.code)

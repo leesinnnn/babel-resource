@@ -7,7 +7,7 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "addLog",
+      "name": "babel debug",
       "skipFiles": [
         "<node_internals>/**"
       ],
