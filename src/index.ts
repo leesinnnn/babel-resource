@@ -1,3 +1,3 @@
-import { instrumentation } from './functionInstrumentation'
+import { injectTracker } from './autoTracker'
 
-console.log(instrumentation()?.code)
+console.log(injectTracker()?.code)
