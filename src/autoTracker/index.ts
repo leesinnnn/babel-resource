@@ -1,7 +1,8 @@
+import path from 'path'
 import { transformSync } from '@babel/core';
 import { autoTrackPlugin } from './plugin';
-import sourceCode from './sourceCode';
+import { getSourceCode } from '../utils'
 
-export const injectTracker = () => transformSync(sourceCode, {
+export const injectTracker = () => transformSync(getSourceCode(path.resolve(__dirname, './sourceCode.ts')), {
   plugins: [[autoTrackPlugin, { trackerPath: 'test'}]]
 })

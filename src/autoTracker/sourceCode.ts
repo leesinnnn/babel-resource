@@ -1,22 +1,20 @@
-export default `
-  import aa from "aa";
-  import * as bb from "bb";
-  import { cc } from "cc";
-  import "dd";
+import aa from "aa";
+import * as bb from "bb";
+import { cc } from "cc";
+import "dd";
 
-  function a() {
-    console.log("aaa");
+function a() {
+  console.log("aaa");
+}
+
+class B {
+  bb() {
+    return "bbb";
   }
+}
 
-  class B {
-    bb() {
-      return "bbb";
-    }
-  }
+const c = () => "ccc";
 
-  const c = () => "ccc";
-
-  const d = function () {
-    console.log("ddd");
-  };
-`;
+const d = function () {
+  console.log("ddd");
+};
