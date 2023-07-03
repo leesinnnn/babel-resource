@@ -2,6 +2,7 @@ import { declare } from '@babel/helper-plugin-utils'
 import { addDefault } from '@babel/helper-module-imports';
 import generate from '@babel/generator';
 import fs from 'fs'
+import path from 'path'
 import { type NodePath } from '@babel/traverse';
 import { ImportDeclaration, JSXAttribute, type StringLiteral, type TemplateLiteral } from '@babel/types'
 
@@ -11,7 +12,6 @@ interface IAutoI18nOption {
 
 const I18N_SOURCE = 'i18n';
 
-// ToDo same string uses same i18n key
 export const autoI18nPlugin = declare((api, option: IAutoI18nOption) => {
   api.assertVersion(7)
   const textArr: { name: string; value: string }[] = [];
@@ -38,7 +38,14 @@ export const autoI18nPlugin = declare((api, option: IAutoI18nOption) => {
 
   const getI18nKey = (() => {
     let index = 0
-    return () => `i18nKey_${++index}`
+    return (stringValue: string) => {
+      const targetItem = textArr.find(item => item.value === stringValue)
+      if (targetItem) {
+        return targetItem.name
+      } else {
+        return `i18nKey_${++index}`
+      }
+    }
   })()
 
   return {
@@ -71,7 +78,7 @@ export const autoI18nPlugin = declare((api, option: IAutoI18nOption) => {
           return
         }
         const stringValue = path.node.value
-        const i18nKey = getI18nKey()
+        const i18nKey = getI18nKey(stringValue)
         const i18nExpression = api.template.expression(`${state.i18nName}.t('${i18nKey}')`)()
         const jsxAttributePath = isChildOfJSXAttribute(path)
         if (jsxAttributePath && !jsxAttributePath.get('value').isJSXExpressionContainer()) {
@@ -90,8 +97,8 @@ export const autoI18nPlugin = declare((api, option: IAutoI18nOption) => {
           path.skip()
           return
         }
-        const i18nKey = getI18nKey()
         const templateStr = path.get('quasis').map(quasisPath => quasisPath.node.value.raw).join('{placeholder}')
+        const i18nKey = getI18nKey(templateStr)
         const paramsStr = path.get('expressions').map(expPath => generate(expPath.node).code).join(',')
         const i18nExpression = api.template.expression(`${state.i18nName}.t(\`${i18nKey}\`${paramsStr ? ','+ paramsStr : ''})`)()
         const jsxAttributePath = isChildOfJSXAttribute(path)
@@ -108,6 +115,11 @@ export const autoI18nPlugin = declare((api, option: IAutoI18nOption) => {
       }
     },
     post() {
+      const i18nSourceMap = textArr.reduce((map, item) => {
+        map[item.name] = item.value
+        return map
+      }, {} as Record<string, string>)
+      fs.writeFileSync(path.resolve(__dirname, './i18nSource.json'), JSON.stringify(i18nSourceMap, null, 2))
     }
   }
 })
