@@ -11,8 +11,8 @@ function App() {
 
   return (
     <div className="app" title={"测试"}>
-      <h1>${title}</h1>
-      <p>${desc}</p>
+      <h1>{title}</h1>
+      <p>{desc}</p>
       <div>{/*i18n-disable*/ "中文"}</div>
     </div>
   );

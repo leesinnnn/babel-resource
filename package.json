@@ -42,6 +42,7 @@
     "@babel/types": "^7.21.3",
     "@types/babel__helper-module-imports": "^7.18.0",
     "@types/babel__helper-plugin-utils": "^7.10.0",
+    "babel-plugin-jsx": "^1.2.0",
     "lodash": "^4.17.21"
   }
 }
